@@ -9,11 +9,11 @@ providers:
     cost_per_1k_tokens: 0.006
 circuit_breaker:
   failure_threshold: 3
-  reset_timeout_seconds: 2
+  reset_timeout_seconds: 0.1
   success_threshold: 1
 cache:
   enabled: true
-  backend: memory          # "memory" (default) or "redis" (requires docker compose up -d)
+  backend: redis          # "memory" (default) or "redis" (requires docker compose up -d)
   ttl_seconds: 300
   similarity_threshold: 0.92
   redis_url: "redis://localhost:6379/0"
@@ -34,3 +34,8 @@ scenarios:
   - name: all_healthy
     description: "Baseline — both providers healthy"
     provider_overrides: {}
+  - name: backup_flaky_50
+    description: "Backup provider fails 50%, primary fails 100% — degraded run"
+    provider_overrides:
+      primary: 1.0
+      backup: 0.5
